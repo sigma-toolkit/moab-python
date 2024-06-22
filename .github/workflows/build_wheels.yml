@@ -37,14 +37,16 @@ jobs:
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
           CIBW_ARCHS_MACOS: "native"
           CIBW_BEFORE_BUILD_LINUX: |
-            yum install epel-release
-            yum update
-            yum install eigen3-devel hdf5-devel
+            dnf install -y epel-release
+            dnf config-manager --enable epel
+            dnf install -y eigen3-devel hdf5-devel
+          CIBW_ENVIRONMENT_LINUX: >
+            LD_LIBRARY_PATH=\$ORIGIN/../../pymoab/core/lib64
           CIBW_BEFORE_BUILD_MACOS: |
             brew install eigen hdf5
           CIBW_ENVIRONMENT_MACOS: >
             MACOSX_DEPLOYMENT_TARGET=${{ matrix.os == 'macos-14' && '14.0' || '13.0' }}
-            DYLD_LIBRARY_PATH=/usr/local/opt/gcc/lib/gcc/current/:$DYLD_LIBRARY_PATH
+            DYLD_LIBRARY_PATH=/usr/local/opt/gcc/lib/gcc/current/:@loader_path/../../pymoab/core/lib:@loader_path/../../pymoab/core/lib64
           CIBW_ENVIRONMENT: >
             CMAKE_ARGS="-DBUILD_SHARED_LIBS=ON -DENABLE_HDF5=ON -DENABLE_FORTRAN=OFF -DENABLE_BLASLAPACK=OFF"
           CIBW_BUILD_FRONTEND: "build"
