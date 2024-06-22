@@ -1,0 +1,58 @@
+name: Build wheels
+
+on:
+  # allows running workflows manually
+  workflow_dispatch:
+
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  main:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            arch: manylinux_x86_64
+          - os: macos-13
+            arch: macosx_x86_64
+          - os: macos-14
+            arch: macosx_arm64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.18.0
+        env:
+          CIBW_BUILD: "cp*-${{ matrix.arch }}"
+          CIBW_ARCHS_LINUX: "x86_64"
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
+          CIBW_ARCHS_MACOS: "native"
+          CIBW_BEFORE_BUILD_LINUX: |
+            sudo apt-get install libeigen3-dev libhdf5-dev
+          CIBW_BEFORE_BUILD_MACOS: |
+            brew install gcc eigen hdf5
+          CIBW_ENVIRONMENT_MACOS: >
+            MACOSX_DEPLOYMENT_TARGET=${{ matrix.os == 'macos-14' && '14.0' || '13.0' }}
+            DYLD_LIBRARY_PATH=/usr/local/opt/gcc/lib/gcc/current/:$DYLD_LIBRARY_PATH
+          CIBW_ENVIRONMENT: >
+            CMAKE_ARGS="-DBUILD_SHARED_LIBS=ON -DENABLE_HDF5=ON -DENABLE_FORTRAN=OFF -DENABLE_BLASLAPACK=OFF"
+          CIBW_BUILD_FRONTEND: "build"
+        with:
+          package-dir: moab
+          output-dir: wheelhouse
+          config-file: "{package}/moab/pyproject.toml"
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./moab/wheelhouse/*.whl
