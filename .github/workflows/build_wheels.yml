@@ -37,7 +37,7 @@ jobs:
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
           CIBW_ARCHS_MACOS: "native"
           CIBW_BEFORE_BUILD_LINUX: |
-            sudo apt-get install libeigen3-dev libhdf5-dev
+            yum install eigen3-devel hdf5-devel
           CIBW_BEFORE_BUILD_MACOS: |
             brew install gcc eigen hdf5
           CIBW_ENVIRONMENT_MACOS: >
