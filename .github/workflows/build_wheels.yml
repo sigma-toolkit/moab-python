@@ -27,7 +27,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          submodules: recursive
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.18.0
@@ -49,7 +49,7 @@ jobs:
         with:
           package-dir: moab
           output-dir: wheelhouse
-          config-file: "{package}/moab/pyproject.toml"
+          config-file: "{package}/pyproject.toml"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
