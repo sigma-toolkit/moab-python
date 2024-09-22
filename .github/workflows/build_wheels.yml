@@ -35,15 +35,16 @@ jobs:
           CIBW_BEFORE_BUILD_LINUX: |
             dnf install -y epel-release
             dnf config-manager --enable epel
-            dnf install -y eigen3-devel hdf5-devel
+            dnf install -y gcc-gfortran lapack-devel hdf5-devel 
           CIBW_BEFORE_BUILD_MACOS: |
-            brew install eigen hdf5
+            brew install gcc hdf5
           CIBW_ENVIRONMENT_LINUX: >
-            SKBUILD_CMAKE_ARGS="-DBUILD_SHARED_LIBS=ON;-DENABLE_HDF5=ON;-DENABLE_FORTRAN=OFF;-DENABLE_BLASLAPACK=OFF;-DENABLE_TESTING=OFF"
+            SKBUILD_CMAKE_ARGS="-DBUILD_SHARED_LIBS=ON;-DENABLE_HDF5=ON;-DENABLE_FORTRAN=OFF;-DENABLE_TESTING=OFF"
           CIBW_ENVIRONMENT_MACOS: >
             MACOSX_DEPLOYMENT_TARGET=${{ matrix.os == 'macos-14' && '14.0' || '13.0' }}
-            SKBUILD_CMAKE_ARGS="-DBUILD_SHARED_LIBS=ON;-DENABLE_HDF5=ON;-DENABLE_FORTRAN=OFF;-DENABLE_BLASLAPACK=OFF;-DENABLE_TESTING=OFF"
+            SKBUILD_CMAKE_ARGS="-DBUILD_SHARED_LIBS=ON;-DENABLE_HDF5=ON;-DENABLE_TESTING=OFF"
             DYLD_LIBRARY_PATH=/usr/local/opt/gcc/lib/gcc/current/:$DYLD_LIBRARY_PATH
+            FC=gfortran-14
           CIBW_BUILD_FRONTEND: "build"
         with:
           package-dir: moab
