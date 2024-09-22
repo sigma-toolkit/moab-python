@@ -45,6 +45,7 @@ jobs:
             SKBUILD_CMAKE_ARGS="-DBUILD_SHARED_LIBS=ON;-DENABLE_HDF5=ON;-DENABLE_TESTING=OFF"
             DYLD_LIBRARY_PATH=/usr/local/opt/gcc/lib/gcc/current/:$DYLD_LIBRARY_PATH
             FC=gfortran-14
+            HDF5_ROOT=$(brew --prefix hdf5)
           CIBW_BUILD_FRONTEND: "build"
         with:
           package-dir: moab
