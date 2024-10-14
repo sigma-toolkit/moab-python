@@ -47,6 +47,7 @@ jobs:
             FC=gfortran-14
             HDF5_ROOT=$(brew --prefix hdf5)
           CIBW_BUILD_FRONTEND: "build"
+          CIBW_REPAIR_WHEEL_COMMAND_MACOS: delocate-wheel -d --require-archs {delocate_archs} -w {dest_dir} -v {wheel}
         with:
           package-dir: moab
           output-dir: wheelhouse
