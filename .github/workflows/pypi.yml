@@ -51,7 +51,7 @@ jobs:
             HDF5_ROOT=$(brew --prefix hdf5)
           CIBW_BUILD_FRONTEND: "build"
           CIBW_TEST_REQUIRES: "pytest"
-          CIBW_TEST_COMMAND: "pytest -ra {project}/moab/test/pymoab"
+          CIBW_TEST_COMMAND: "cd {project}/moab/test/pymoab && pytest -ra"
         with:
           package-dir: moab
           output-dir: wheelhouse
